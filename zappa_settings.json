@@ -12,6 +12,7 @@
         // "role_name": "MyLambdaRole", // Name of Zappa execution role. Default <project_name>-<env>-ZappaExecutionRole. To use a different, pre-existing policy, you must also set manage_roles to false.
         "apigateway_enabled": false, // Set to false if you don't want to create an API Gateway resource. Default true.
         // "apigateway_description": "My funky application!", // Define a custom description for the API Gateway console. Default None.
+        "memory_size": 256, // Lambda function memory in MB. Default 512.
         "aws_environment_variables": {"DATABASE_URL": "AQICAHjXDZpqefPvg36KSFZlOh+E+Wwt4b/lfhAHIl7LNglkegGMTehUVMyoamJX517irjKEAAAAvDCBuQYJKoZIhvcNAQcGoIGrMIGoAgEAMIGiBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDPwf4dWdYYyk/d7zHwIBEIB18lh9e8WOyPgVJ40bj6bDgTAb2OE4dQmYCmQ6fivDIBfbR+j97qA0g/4UY0vhM3x9dMCqO9yePX61l4YYcbpSYzYwHDfM2/6qZ4zr/T4Ut6QqLRORysAF/J++DgNGc/THN1rO5Wm+ZhuynFwi3xpO6amvfn9e", "CLIENT_ID": "AQICAHjXDZpqefPvg36KSFZlOh+E+Wwt4b/lfhAHIl7LNglkegFc3uwjZ3Crk4OEgOtw/pjoAAAAbDBqBgkqhkiG9w0BBwagXTBbAgEAMFYGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMKekH5AkqJQlDpbhFAgEQgCk6MGNt/wfwY23PueOXT9+na4YcgSwjhGbUG9eA0aVqKYmdbsevTN70PQ==", "CLIENT_SECRET": "AQICAHjXDZpqefPvg36KSFZlOh+E+Wwt4b/lfhAHIl7LNglkegG9rn4ghb6j6bwa99RlChY9AAAAeTB3BgkqhkiG9w0BBwagajBoAgEAMGMGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM2Ugl1o3SZYNm3VDjAgEQgDbOgWJ15VJDMSz6ALJJUqUL64FRwDmkeHZgY8+Dn4d7Do0mbW67pKv2mKExgep6zM36jLtkP4E=", "PASSWORD": "AQICAHjXDZpqefPvg36KSFZlOh+E+Wwt4b/lfhAHIl7LNglkegGHaBawbdOtZUlokJ/iZ9XgAAAAiTCBhgYJKoZIhvcNAQcGoHkwdwIBADByBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDO3EcdZNzRtTja+/xwIBEIBFJEyfVqOd/QIsgRwx/EUcIX95n9j1fsuddDvwdhK+jIBSnecuWRVYz4amCwZCdfR7C3guTigRh4eKvbQsMszvJC4cjchu", "USERNAME": "AQICAHjXDZpqefPvg36KSFZlOh+E+Wwt4b/lfhAHIl7LNglkegGMKhRDj8XDrhEQOnopS3G4AAAAbTBrBgkqhkiG9w0BBwagXjBcAgEAMFcGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMDheRy22WjdDWjnnEAgEQgCr8JXHnXB1M+gHSbfMe3mk10re3h0frz9B0RARlnIp8Q7boA7ddVuqaLbI="},  // A dictionary of environment variables that will be available to your deployed app via AWS Lambdas native environment variables. See also "environment_variables" and "remote_env" . Default {}.
         "events": [{
            "function": "active_user_bot.check_online_users",
@@ -27,6 +28,7 @@
        "cloudwatch_data_trace": false, // Logs all data about received events. Default false.
        "cloudwatch_metrics_enabled": false, // Additional metrics for the API Gateway. Default false.
        "xray_tracing": false, // Optional, enable AWS X-Ray tracing on your lambda function.
+       "timeout_seconds": 30, // Maximum lifespan for the Lambda function (default 30, max 900.)
        "debug": false // Print Zappa configuration errors tracebacks in the 500. Default true.
     }
 }
