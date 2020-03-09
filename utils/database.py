@@ -5,10 +5,8 @@ from sqlalchemy import (
     DateTime,
     Integer,
     String,
-    ForeignKey,
     MetaData,
 )
-from sqlalchemy.sql import exists, and_
 from sqlalchemy.orm import sessionmaker
 import datetime
 import logging
@@ -24,7 +22,7 @@ SQLITE = "sqlite"
 POSTGRES = "postgres"
 
 SUBREDDITS = "subreddits"
-tables = (SUBREDDITS)
+tables = SUBREDDITS
 
 
 class Db:
@@ -54,9 +52,7 @@ class Db:
     def insert_(self, table, args):
         if table not in tables:
             raise ValueError("Table unknown: {}".format(table))
-        log.debug(
-            "Insert {args} into table {table}".format(table=table, args=args)
-        )
+        log.debug("Insert {args} into table {table}".format(table=table, args=args))
         table_ = self.metadata.tables.get(table, None)
         # table_ = Table(table, self.metadata, autoload=True)
         with self.db_engine.connect() as connection:

@@ -39,13 +39,12 @@ INTERVAL = MIN_INTERVAL
 if "SERVERTYPE" in os.environ and os.environ["SERVERTYPE"] == "AWS Lambda":
     import boto3
     from base64 import b64decode
+
     ENCRYPTED = os.environ["DATABASE_URL"]
     # Decrypt code should run once and variables stored outside of the function
     # handler so that these are decrypted once per container
     DATABASE_URL = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(ENCRYPTED))[
-            "Plaintext"
-        ]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(ENCRYPTED))["Plaintext"]
     )
     CLIENT_SECRET = bytes.decode(
         boto3.client("kms").decrypt(CiphertextBlob=b64decode(CLIENT_SECRET))[
@@ -53,60 +52,54 @@ if "SERVERTYPE" in os.environ and os.environ["SERVERTYPE"] == "AWS Lambda":
         ]
     )
     CLIENT_ID = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(CLIENT_ID))[
-            "Plaintext"
-        ]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(CLIENT_ID))["Plaintext"]
     )
     PASSWORD = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(PASSWORD))[
-            "Plaintext"
-        ]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(PASSWORD))["Plaintext"]
     )
     USERNAME = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(USERNAME))[
-            "Plaintext"
-        ]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(USERNAME))["Plaintext"]
     )
     DB_TYPE = database.POSTGRES
 else:
     parser = argparse.ArgumentParser(
-        description="Get number of subscribers and active user count of subreddit.", epilog="", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description="Get number of subscribers and active user count of subreddit.",
+        epilog="",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    group_auth = parser.add_argument_group('authentication')
-    group_auth.add_argument(
-        "-s", "--secret", help="Reddit app's client secret."
-    )
-    group_auth.add_argument(
-        "-i", "--id", help="Reddit app's client id."
-    )
-    group_auth.add_argument(
-        "-p", "--password", help="Reddit password."
-    )
-    group_auth.add_argument(
-        "-u", "--user", help="Reddit username."
-    )
-    group = parser.add_argument_group('behaviour')
-    
+    group_auth = parser.add_argument_group("authentication")
+    group_auth.add_argument("-s", "--secret", help="Reddit app's client secret.")
+    group_auth.add_argument("-i", "--id", help="Reddit app's client id.")
+    group_auth.add_argument("-p", "--password", help="Reddit password.")
+    group_auth.add_argument("-u", "--user", help="Reddit username.")
+    group = parser.add_argument_group("behaviour")
+
     group.add_argument(
-        "--runs", default=MIN_RUNS, type=int, help="How often active users should be retreived. Used in combination with --interval. If set to <=1 it runs once."
+        "--runs",
+        default=MIN_RUNS,
+        type=int,
+        help="How often active users should be retreived. Used in combination with --interval. If set to <=1 it runs once.",
     )
     group.add_argument(
-        "--interval", default=MIN_INTERVAL, type=int, help="Waiting period [seconds] between runs. Used in combination with --runs."
+        "--interval",
+        default=MIN_INTERVAL,
+        type=int,
+        help="Waiting period [seconds] between runs. Used in combination with --runs.",
     )
     args = parser.parse_args()
-    
+
     if not CLIENT_SECRET:
         CLIENT_SECRET = args.secret
-    
+
     if not CLIENT_ID:
         CLIENT_ID = args.id
-    
+
     if not PASSWORD:
         PASSWORD = args.password
-    
+
     if not USERNAME:
         USERNAME = args.user
-    
+
     RUNS = args.runs
     INTERVAL = args.interval
     log.setLevel(logging.DEBUG)
@@ -115,10 +108,22 @@ else:
     DB_TYPE = database.POSTGRES
     DATABASE_URL = "postgres@localhost:5432/test"
 
+
 class OnlineUserBot:
     """A simple bot that finds the number of users online a specifc Subreddit."""
 
-    def __init__(self, subreddit_name, interval, runs, client_id, client_secret, password, user_agent, username, debug=False):
+    def __init__(
+        self,
+        subreddit_name,
+        interval,
+        runs,
+        client_id,
+        client_secret,
+        password,
+        user_agent,
+        username,
+        debug=False,
+    ):
         self.subreddit_name = subreddit_name
         self.interval = max(int(interval), MIN_INTERVAL)
         self.runs = max(int(runs), MIN_RUNS)
@@ -131,11 +136,13 @@ class OnlineUserBot:
         self.debug = debug
 
     def auth(self):
-        self.reddit = praw.Reddit(client_id = self.client_id,
-                                  client_secret = self.client_secret,
-                                  password = self.password,
-                                  user_agent = self.user_agent,
-                                  username = self.username)
+        self.reddit = praw.Reddit(
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            password=self.password,
+            user_agent=self.user_agent,
+            username=self.username,
+        )
 
         self.subreddit = self.reddit.subreddit(self.subreddit_name)
 
@@ -158,7 +165,12 @@ class OnlineUserBot:
         users_online = self.get_users_online()
         subscribers = self.get_subscribers()
 
-        subreddit = {"subreddit": self.subreddit_name, "subscribers": subscribers, "users_online": users_online, "created": time_checked}
+        subreddit = {
+            "subreddit": self.subreddit_name,
+            "subscribers": subscribers,
+            "users_online": users_online,
+            "created": time_checked,
+        }
 
         self.save_to_db(subreddit=subreddit)
 
@@ -174,16 +186,23 @@ class OnlineUserBot:
 
 
 def check_online_users(event, context):
-    subreddits = (
-        "Monero",
-    )
+    subreddits = ("Monero",)
     for subreddit in subreddits:
         # Change the input to this class with your information from the Reddit API (See README.md for instructions)
-        bot = OnlineUserBot(subreddit_name=subreddit, interval=INTERVAL, runs=RUNS, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, password=PASSWORD, user_agent='subreddit_user_count1.0', username=USERNAME, debug=DEBUG)
+        bot = OnlineUserBot(
+            subreddit_name=subreddit,
+            interval=INTERVAL,
+            runs=RUNS,
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            password=PASSWORD,
+            user_agent="subreddit_user_count1.0",
+            username=USERNAME,
+            debug=DEBUG,
+        )
         bot.db = database.Db(dbtype=DB_TYPE, dbname=DATABASE_URL)
         bot.run_bot()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     check_online_users(event=None, context=None)
-
