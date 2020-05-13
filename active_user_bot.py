@@ -44,7 +44,9 @@ if "SERVERTYPE" in os.environ and os.environ["SERVERTYPE"] == "AWS Lambda":
     # Decrypt code should run once and variables stored outside of the function
     # handler so that these are decrypted once per container
     DATABASE_URL = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(ENCRYPTED))["Plaintext"]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(ENCRYPTED))[
+            "Plaintext"
+        ]
     )
     CLIENT_SECRET = bytes.decode(
         boto3.client("kms").decrypt(CiphertextBlob=b64decode(CLIENT_SECRET))[
@@ -52,13 +54,19 @@ if "SERVERTYPE" in os.environ and os.environ["SERVERTYPE"] == "AWS Lambda":
         ]
     )
     CLIENT_ID = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(CLIENT_ID))["Plaintext"]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(CLIENT_ID))[
+            "Plaintext"
+        ]
     )
     PASSWORD = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(PASSWORD))["Plaintext"]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(PASSWORD))[
+            "Plaintext"
+        ]
     )
     USERNAME = bytes.decode(
-        boto3.client("kms").decrypt(CiphertextBlob=b64decode(USERNAME))["Plaintext"]
+        boto3.client("kms").decrypt(CiphertextBlob=b64decode(USERNAME))[
+            "Plaintext"
+        ]
     )
     DB_TYPE = database.POSTGRES
 else:
@@ -68,7 +76,9 @@ else:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     group_auth = parser.add_argument_group("authentication")
-    group_auth.add_argument("-s", "--secret", help="Reddit app's client secret.")
+    group_auth.add_argument(
+        "-s", "--secret", help="Reddit app's client secret."
+    )
     group_auth.add_argument("-i", "--id", help="Reddit app's client id.")
     group_auth.add_argument("-p", "--password", help="Reddit password.")
     group_auth.add_argument("-u", "--user", help="Reddit username.")
